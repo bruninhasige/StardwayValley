@@ -31,6 +31,28 @@ export interface MarriageCandidate {
   giftTip?: string;
 }
 
+export type CalendarEventKind = "Festival" | "Coleta" | "Mundo" | "Lembrete";
+
+export interface CalendarEvent {
+  id: string;
+  season: Exclude<Season, "Qualquer estação">;
+  startDay: number;
+  endDay?: number;
+  year?: number;
+  title: string;
+  label: CalendarEventKind;
+  description?: string;
+  trackable?: boolean;
+}
+
+export interface CalendarBirthday {
+  id: string;
+  name: string;
+  season: Exclude<Season, "Qualquer estação">;
+  day: number;
+  marriageCandidateId?: string;
+}
+
 export const SEASONS: Exclude<Season, "Qualquer estação">[] = [
   "Primavera",
   "Verão",
@@ -86,18 +108,20 @@ export const QUESTS: QuestTask[] = [
     npc: "Evelyn",
     item: "Alho-poró",
     objective: "Leve um Alho-poró para Evelyn.",
-    reward: "500 ouros",
+    reward: "500 ouros + 1 coração de amizade com Evelyn",
   },
   {
     id: "quest-spring-fresh-fruit",
     title: "Frutas frescas",
     kind: "Entrega",
     season: "Primavera",
+    day: 6,
     year: 2,
     npc: "Emily",
     item: "Damasco",
     objective: "Leve um Damasco fresco para Emily.",
-    note: "O pedido chega durante a Primavera do Ano 2.",
+    reward: "600 ouros + 1 coração de amizade com Emily",
+    note: "A carta chega no dia 6 da Primavera do Ano 2.",
   },
   {
     id: "special-spring-george-gifts",
@@ -165,6 +189,7 @@ export const QUESTS: QuestTask[] = [
     title: "Remédio de Joelho",
     kind: "Entrega",
     season: "Verão",
+    day: 25,
     npc: "George",
     item: "Pimenta Picante",
     objective: "Leve uma Pimenta Picante para George.",
@@ -180,7 +205,19 @@ export const QUESTS: QuestTask[] = [
     npc: "Demetrius",
     item: "Baiacu",
     objective: "Pesque ou obtenha um Baiacu e entregue para Demetrius.",
-    reward: "Ouro + 1 coração de amizade com Demetrius",
+    reward: "750 ouros + 1 coração de amizade com Demetrius",
+  },
+  {
+    id: "quest-fall-pam-juice",
+    title: "Pam precisa de suco",
+    kind: "Entrega",
+    season: "Outono",
+    day: 19,
+    year: 2,
+    npc: "Pam",
+    item: "Conjunto de Pilhas",
+    objective: "Leve um Conjunto de Pilhas para Pam.",
+    reward: "400 ouros + 1 coração de amizade com Pam",
   },
   {
     id: "quest-fall-linus-basket",
@@ -200,10 +237,11 @@ export const QUESTS: QuestTask[] = [
     title: "Esculpindo Abóboras",
     kind: "Entrega",
     season: "Outono",
+    day: 19,
     npc: "Caroline",
     item: "Abóbora",
     objective: "Leve uma Abóbora para Caroline.",
-    reward: "500 ouros",
+    reward: "500 ouros + 1 coração de amizade com Caroline",
   },
   {
     id: "quest-fall-fish-casserole",
@@ -224,6 +262,7 @@ export const QUESTS: QuestTask[] = [
     title: "Desbloquear o Quadro de Pedidos Especiais",
     kind: "Desbloqueio",
     season: "Outono",
+    day: 2,
     year: 1,
     objective:
       "Assista à cena que instala o quadro em frente à casa do Prefeito Lewis.",
@@ -312,11 +351,12 @@ export const QUESTS: QuestTask[] = [
     id: "quest-any-cow-delight",
     title: "Agrado de Vaca",
     kind: "Entrega",
-    season: "Qualquer estação",
+    season: "Outono",
+    day: 3,
     npc: "Marnie",
     item: "Amaranto",
     objective: "Leve um feixe de Amaranto para Marnie.",
-    reward: "500 ouros",
+    reward: "500 ouros + 1 coração de amizade com Marnie",
     note: "O item é uma plantação de Outono, então vale guardar uma unidade.",
   },
   {
@@ -462,6 +502,205 @@ export const QUESTS: QuestTask[] = [
   },
 ];
 
+
+export const CALENDAR_EVENTS: CalendarEvent[] = [
+  {
+    id: "spring-egg-festival",
+    season: "Primavera",
+    startDay: 13,
+    title: "Festival do Ovo",
+    label: "Festival",
+    trackable: true,
+    description: "Entre na Vila Pelicanos entre 9h e 14h. É um bom dia para comprar Sementes de Morango.",
+  },
+  {
+    id: "spring-desert-festival",
+    season: "Primavera",
+    startDay: 15,
+    endDay: 17,
+    title: "Festival do Deserto",
+    label: "Festival",
+    trackable: true,
+    description: "Ocorre no Deserto de Calico e exige que o ônibus esteja reparado.",
+  },
+  {
+    id: "spring-salmonberry",
+    season: "Primavera",
+    startDay: 15,
+    endDay: 18,
+    title: "Temporada de Amora-silvestre",
+    label: "Coleta",
+    description: "Sacuda os arbustos pelo vale para juntar Amoras-silvestres.",
+  },
+  {
+    id: "spring-flower-dance",
+    season: "Primavera",
+    startDay: 24,
+    title: "Dança das Flores",
+    label: "Festival",
+    trackable: true,
+    description: "Para dançar com um pretendente são necessários 4 corações; dançar aumenta a amizade em 1 coração.",
+  },
+  {
+    id: "summer-earthquake",
+    season: "Verão",
+    startDay: 3,
+    year: 1,
+    title: "Terremoto",
+    label: "Mundo",
+    description: "Ao acordar, o terremoto desbloqueia o Spa e a área da Ferrovia.",
+  },
+  {
+    id: "summer-luau",
+    season: "Verão",
+    startDay: 11,
+    title: "Luau",
+    label: "Festival",
+    trackable: true,
+    description: "Leve um ingrediente de boa qualidade para a sopa comunitária e aproveite o evento para socializar.",
+  },
+  {
+    id: "summer-beach-forage",
+    season: "Verão",
+    startDay: 12,
+    endDay: 14,
+    title: "Coletáveis extras na praia",
+    label: "Coleta",
+    description: "Há chance de encontrar mais itens de coleta na praia durante estes dias.",
+  },
+  {
+    id: "summer-trout-derby",
+    season: "Verão",
+    startDay: 20,
+    endDay: 21,
+    title: "Competição de Truta",
+    label: "Festival",
+    trackable: true,
+    description: "Evento de pesca realizado durante dois dias do Verão.",
+  },
+  {
+    id: "summer-moonlight-jellies",
+    season: "Verão",
+    startDay: 28,
+    title: "Dança das Medusas-da-Lua",
+    label: "Festival",
+    trackable: true,
+    description: "Vá à praia entre 22h e meia-noite para encerrar o Verão com o festival.",
+  },
+  {
+    id: "fall-blackberry",
+    season: "Outono",
+    startDay: 8,
+    endDay: 11,
+    title: "Temporada de Amora",
+    label: "Coleta",
+    description: "Sacuda os arbustos pelo vale para coletar Amoras.",
+  },
+  {
+    id: "fall-stardew-fair",
+    season: "Outono",
+    startDay: 16,
+    title: "Feira do Vale do Orvalho",
+    label: "Festival",
+    trackable: true,
+    description: "Separe 9 bons itens para a mostra de granjas e participe dos minijogos da feira.",
+  },
+  {
+    id: "fall-spirits-eve",
+    season: "Outono",
+    startDay: 27,
+    title: "Véspera dos Espíritos",
+    label: "Festival",
+    trackable: true,
+    description: "Festival noturno na Vila Pelicanos, com labirinto e recompensas.",
+  },
+  {
+    id: "winter-ice-festival",
+    season: "Inverno",
+    startDay: 8,
+    title: "Festival do Gelo",
+    label: "Festival",
+    trackable: true,
+    description: "Festival de Inverno com competição de pesca.",
+  },
+  {
+    id: "winter-squidfest",
+    season: "Inverno",
+    startDay: 12,
+    endDay: 13,
+    title: "Festival da Lula",
+    label: "Festival",
+    trackable: true,
+    description: "Dois dias dedicados à pesca de Lula, com metas e recompensas.",
+  },
+  {
+    id: "winter-night-market",
+    season: "Inverno",
+    startDay: 15,
+    endDay: 17,
+    title: "Mercado Noturno",
+    label: "Festival",
+    trackable: true,
+    description: "A praia recebe lojas e atrações noturnas; casas e lojas da vila continuam funcionando normalmente.",
+  },
+  {
+    id: "winter-secret-gift-letter",
+    season: "Inverno",
+    startDay: 18,
+    title: "Descobrir amigo secreto",
+    label: "Lembrete",
+    description: "A carta do Prefeito Lewis informa para qual morador você deverá levar um presente na Estrela Invernal.",
+  },
+  {
+    id: "winter-star-feast",
+    season: "Inverno",
+    startDay: 25,
+    title: "Festival da Estrela Invernal",
+    label: "Festival",
+    trackable: true,
+    description: "Leve o presente do seu amigo secreto para o festival na Vila Pelicanos.",
+  },
+];
+
+export const CALENDAR_BIRTHDAYS: CalendarBirthday[] = [
+  { id: "kent", name: "Kent", season: "Primavera", day: 4 },
+  { id: "lewis", name: "Lewis", season: "Primavera", day: 7 },
+  { id: "vincent", name: "Vincent", season: "Primavera", day: 10 },
+  { id: "haley", name: "Haley", season: "Primavera", day: 14, marriageCandidateId: "haley" },
+  { id: "pam", name: "Pam", season: "Primavera", day: 18 },
+  { id: "shane", name: "Shane", season: "Primavera", day: 20, marriageCandidateId: "shane" },
+  { id: "pierre", name: "Pierre", season: "Primavera", day: 26 },
+  { id: "emily", name: "Emily", season: "Primavera", day: 27, marriageCandidateId: "emily" },
+
+  { id: "jas", name: "Jas", season: "Verão", day: 4 },
+  { id: "gus", name: "Gus", season: "Verão", day: 8 },
+  { id: "maru", name: "Maru", season: "Verão", day: 10, marriageCandidateId: "maru" },
+  { id: "alex", name: "Alex", season: "Verão", day: 13, marriageCandidateId: "alex" },
+  { id: "sam", name: "Sam", season: "Verão", day: 17, marriageCandidateId: "sam" },
+  { id: "demetrius", name: "Demetrius", season: "Verão", day: 19 },
+  { id: "dwarf", name: "Anão", season: "Verão", day: 22 },
+  { id: "willy", name: "Willy", season: "Verão", day: 24 },
+  { id: "leo", name: "Leo", season: "Verão", day: 26 },
+
+  { id: "penny", name: "Penny", season: "Outono", day: 2, marriageCandidateId: "penny" },
+  { id: "elliott", name: "Elliott", season: "Outono", day: 5, marriageCandidateId: "elliott" },
+  { id: "jodi", name: "Jodi", season: "Outono", day: 11 },
+  { id: "abigail", name: "Abigail", season: "Outono", day: 13, marriageCandidateId: "abigail" },
+  { id: "sandy", name: "Sandy", season: "Outono", day: 15 },
+  { id: "marnie", name: "Marnie", season: "Outono", day: 18 },
+  { id: "robin", name: "Robin", season: "Outono", day: 21 },
+  { id: "george", name: "George", season: "Outono", day: 24 },
+
+  { id: "krobus", name: "Krobus", season: "Inverno", day: 1 },
+  { id: "linus", name: "Linus", season: "Inverno", day: 3 },
+  { id: "caroline", name: "Caroline", season: "Inverno", day: 7 },
+  { id: "sebastian", name: "Sebastian", season: "Inverno", day: 10, marriageCandidateId: "sebastian" },
+  { id: "harvey", name: "Harvey", season: "Inverno", day: 14, marriageCandidateId: "harvey" },
+  { id: "wizard", name: "Feiticeiro", season: "Inverno", day: 17 },
+  { id: "evelyn", name: "Evelyn", season: "Inverno", day: 20 },
+  { id: "leah", name: "Leah", season: "Inverno", day: 23, marriageCandidateId: "leah" },
+  { id: "clint", name: "Clint", season: "Inverno", day: 26 },
+];
 
 export const SEASON_HIGHLIGHTS: Record<
   Exclude<Season, "Qualquer estação">,
