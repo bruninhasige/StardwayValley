@@ -31,16 +31,15 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { SeasonCalendar } from "@/components/stardew/SeasonCalendar";
 import { useChecklistProgress } from "@/hooks/use-checklist-progress";
 import { CHECKLIST_CATEGORIES } from "@/lib/stardew-checklist";
 import {
-  AQUATIC_OVERPOPULATION_BY_SEASON,
   FRIENDSHIP_MILESTONES,
   FRIENDSHIP_PROGRESS_IDS,
   GUIDE_TASK_IDS,
   MARRIAGE_CANDIDATES,
   QUESTS,
-  SEASON_HIGHLIGHTS,
   SEASONS,
   type QuestTask,
   type Season,
@@ -426,133 +425,8 @@ export default function Index() {
             </div>
           </TabsContent>
 
-          <TabsContent value="seasons" className="mt-0 space-y-6">
-            <section className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-6">
-              <div className="flex items-start gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-secondary text-secondary-foreground">
-                  <CalendarDays className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-display text-xl font-semibold">Planejamento sazonal</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Use esta visão antes de iniciar cada estação para separar itens,
-                    lembrar aniversários e não perder missões com data marcada.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {SEASONS.map((season) => {
-              const quests = filteredQuests
-                .filter((quest) => quest.season === season)
-                .sort((a, b) => (a.day ?? 99) - (b.day ?? 99));
-              const birthdays = filteredCandidates
-                .filter((candidate) => candidate.birthday.season === season)
-                .sort((a, b) => a.birthday.day - b.birthday.day);
-
-              if (query && quests.length === 0 && birthdays.length === 0) return null;
-
-              return (
-                <section
-                  key={season}
-                  className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-6"
-                >
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <h3 className="font-display text-2xl font-semibold">
-                        {SEASON_EMOJI[season]} {season}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {quests.length} missões desta estação · {birthdays.length} aniversários de pretendentes
-                      </p>
-                    </div>
-                    <Badge variant="outline">Pedidos e presentes</Badge>
-                  </div>
-
-                  <div className="mt-5 grid gap-5 xl:grid-cols-[1.4fr_0.8fr]">
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                        Missões com relação à estação
-                      </h4>
-                      {quests.length > 0 ? (
-                        quests.map((quest) => (
-                          <QuestCard
-                            key={quest.id}
-                            quest={quest}
-                            checked={!!checked[quest.id]}
-                            onToggle={() => toggle(quest.id)}
-                          />
-                        ))
-                      ) : (
-                        <p className="rounded-2xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-                          Nenhuma missão encontrada nesta estação para a busca atual.
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                          Aniversários
-                        </h4>
-                        <div className="mt-3 space-y-2">
-                          {birthdays.map((candidate) => (
-                            <div
-                              key={candidate.id}
-                              className="rounded-2xl bg-secondary/60 p-3"
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <p className="font-semibold text-foreground">{candidate.name}</p>
-                                <Badge>dia {candidate.birthday.day}</Badge>
-                              </div>
-                              <p className="mt-2 text-xs text-muted-foreground">
-                                ❤️ Sugestão amada: {candidate.lovedGifts.slice(0, 3).join(", ")}
-                              </p>
-                            </div>
-                          ))}
-                          {birthdays.length === 0 && (
-                            <p className="text-sm text-muted-foreground">Nenhum aniversário encontrado.</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="rounded-2xl border border-border bg-secondary/35 p-4">
-                        <h4 className="font-semibold">📅 Datas importantes</h4>
-                        <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
-                          {SEASON_HIGHLIGHTS[season].festivals.map((event) => (
-                            <li key={event}>• {event}</li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="rounded-2xl border border-border bg-secondary/35 p-4">
-                        <h4 className="font-semibold">📦 O que vale preparar</h4>
-                        <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
-                          {SEASON_HIGHLIGHTS[season].prepare.map((tip) => (
-                            <li key={tip}>• {tip}</li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="rounded-2xl border border-border bg-secondary/35 p-4">
-                        <div className="flex items-center gap-2">
-                          <Fish className="h-4 w-4 text-primary" />
-                          <h4 className="font-semibold">Superpopulação Aquática</h4>
-                        </div>
-                        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                          Se o pedido especial de Demetrius aparecer, estes são os peixes que podem ser solicitados nesta estação:
-                        </p>
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {AQUATIC_OVERPOPULATION_BY_SEASON[season].map((fish) => (
-                            <Badge key={fish} variant="outline">{fish}</Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              );
-            })}
+          <TabsContent value="seasons" className="mt-0">
+            <SeasonCalendar query={query} checked={checked} toggle={toggle} />
           </TabsContent>
 
           <TabsContent value="quests" className="mt-0 space-y-6">
